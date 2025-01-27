@@ -27,10 +27,14 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .place.reservee {
             background-color: red;
             cursor: not-allowed;
+        }
+        .place:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -39,9 +43,9 @@
     <p>Clique sur une place disponible pour réserver !</p>
     <div class="canape">
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
-        <!-- Les cercles des places seront ajoutés ici -->
     </div>
     <script>
+        // Liste des places et positions
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
@@ -50,28 +54,47 @@
             { id: 5, top: 170, left: 395 },
         ];
 
+        // Récupération des réservations existantes depuis localStorage
+        const reservations = JSON.parse(localStorage.getItem('reservations')) || {};
+
         const canape = document.querySelector('.canape');
 
+        // Fonction pour mettre à jour les réservations
+        const updateReservations = () => {
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+        };
+
+        // Création des cercles pour chaque place
         places.forEach(place => {
             const div = document.createElement('div');
             div.className = 'place';
             div.style.top = place.top + 'px';
             div.style.left = place.left + 'px';
             div.textContent = place.id;
-            div.dataset.id = place.id;
-            canape.appendChild(div);
 
+            // Si la place est déjà réservée, on met à jour l'affichage
+            if (reservations[place.id]) {
+                div.classList.add('reservee');
+                div.textContent = reservations[place.id];
+            }
+
+            // Gestion du clic sur une place
             div.addEventListener('click', () => {
                 if (div.classList.contains('reservee')) {
                     alert("Cette place est déjà réservée !");
                 } else {
                     const nom = prompt("Entrez votre prénom pour réserver :");
                     if (nom) {
+                        reservations[place.id] = nom;
+                        updateReservations(); // Mise à jour de localStorage
                         div.classList.add('reservee');
                         div.textContent = nom;
+                        alert(`Place ${place.id} réservée avec succès pour ${nom} !`);
                     }
                 }
             });
+
+            canape.appendChild(div);
         });
     </script>
 </body>
