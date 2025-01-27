@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation de Canapé</title>
+    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-database.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,7 +47,32 @@
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
     </div>
     <script>
-        const apiURL = "https://raw.githubusercontent.com/getordone/reservation-canape/refs/heads/main/reservations.json";
+        // Configuration Firebase
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
+  authDomain: "reservation-canape.firebaseapp.com",
+  databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
+  projectId: "reservation-canape",
+  storageBucket: "reservation-canape.firebasestorage.app",
+  messagingSenderId: "627109249531",
+  appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
+  measurementId: "G-MD8Q5TNHVC"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
@@ -56,28 +83,31 @@
 
         const canape = document.querySelector('.canape');
 
-        // Charger les réservations depuis le fichier JSON
-        async function chargerReservations() {
-            try {
-                const response = await fetch(apiURL);
-                const reservations = await response.json();
-                Object.keys(reservations).forEach(id => {
-                    const place = document.querySelector(`[data-id="${id}"]`);
-                    if (place) {
-                        place.classList.add('reservee');
-                        place.textContent = reservations[id];
-                    }
-                });
-            } catch (error) {
-                console.error("Erreur lors du chargement des réservations :", error);
-            }
+        // Charger les réservations depuis Firebase
+        function chargerReservations() {
+            firebase.database().ref('reservations').on('value', (snapshot) => {
+                const reservations = snapshot.val();
+                if (reservations) {
+                    Object.keys(reservations).forEach(id => {
+                        const place = document.querySelector(`[data-id="${id}"]`);
+                        if (place) {
+                            place.classList.add('reservee');
+                            place.textContent = reservations[id];
+                        }
+                    });
+                }
+            });
         }
 
-        // Fonction pour mettre à jour une réservation
-        async function reserverPlace(id, nom) {
-            // Pour une solution simple, tu ne peux pas écrire directement sur GitHub via fetch.
-            // Il faut implémenter un backend ou modifier manuellement le fichier.
-            alert("Pour écrire sur GitHub, il faut un script côté serveur !");
+        // Ajouter une réservation dans Firebase
+        function reserverPlace(id, nom) {
+            firebase.database().ref('reservations/' + id).set(nom)
+                .then(() => {
+                    alert(`Place ${id} réservée avec succès pour ${nom} !`);
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la réservation :", error);
+                });
         }
 
         // Générer les places sur le canapé
