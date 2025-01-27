@@ -45,7 +45,7 @@
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
     </div>
     <script>
-        // Liste des places et positions
+        const apiURL = "https://raw.githubusercontent.com/getordone/reservation-canape/refs/heads/main/reservations.json";
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
@@ -54,48 +54,58 @@
             { id: 5, top: 170, left: 395 },
         ];
 
-        // Récupération des réservations existantes depuis localStorage
-        const reservations = JSON.parse(localStorage.getItem('reservations')) || {};
-
         const canape = document.querySelector('.canape');
 
-        // Fonction pour mettre à jour les réservations
-        const updateReservations = () => {
-            localStorage.setItem('reservations', JSON.stringify(reservations));
-        };
+        // Charger les réservations depuis le fichier JSON
+        async function chargerReservations() {
+            try {
+                const response = await fetch(apiURL);
+                const reservations = await response.json();
+                Object.keys(reservations).forEach(id => {
+                    const place = document.querySelector(`[data-id="${id}"]`);
+                    if (place) {
+                        place.classList.add('reservee');
+                        place.textContent = reservations[id];
+                    }
+                });
+            } catch (error) {
+                console.error("Erreur lors du chargement des réservations :", error);
+            }
+        }
 
-        // Création des cercles pour chaque place
+        // Fonction pour mettre à jour une réservation
+        async function reserverPlace(id, nom) {
+            // Pour une solution simple, tu ne peux pas écrire directement sur GitHub via fetch.
+            // Il faut implémenter un backend ou modifier manuellement le fichier.
+            alert("Pour écrire sur GitHub, il faut un script côté serveur !");
+        }
+
+        // Générer les places sur le canapé
         places.forEach(place => {
             const div = document.createElement('div');
             div.className = 'place';
             div.style.top = place.top + 'px';
             div.style.left = place.left + 'px';
             div.textContent = place.id;
+            div.dataset.id = place.id;
+            canape.appendChild(div);
 
-            // Si la place est déjà réservée, on met à jour l'affichage
-            if (reservations[place.id]) {
-                div.classList.add('reservee');
-                div.textContent = reservations[place.id];
-            }
-
-            // Gestion du clic sur une place
             div.addEventListener('click', () => {
                 if (div.classList.contains('reservee')) {
                     alert("Cette place est déjà réservée !");
                 } else {
                     const nom = prompt("Entrez votre prénom pour réserver :");
                     if (nom) {
-                        reservations[place.id] = nom;
-                        updateReservations(); // Mise à jour de localStorage
                         div.classList.add('reservee');
                         div.textContent = nom;
-                        alert(`Place ${place.id} réservée avec succès pour ${nom} !`);
+                        reserverPlace(place.id, nom);
                     }
                 }
             });
-
-            canape.appendChild(div);
         });
+
+        // Charger les réservations au démarrage
+        chargerReservations();
     </script>
 </body>
 </html>
