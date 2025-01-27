@@ -48,28 +48,17 @@
     </div>
     <script>
         // Configuration Firebase
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
+            authDomain: "reservation-canape.firebaseapp.com",
+            databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
+            projectId: "reservation-canape",
+            storageBucket: "reservation-canape.appspot.com",
+            messagingSenderId: "627109249531",
+            appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
+            measurementId: "G-MD8Q5TNHVC"
+        };
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
-  authDomain: "reservation-canape.firebaseapp.com",
-  databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
-  projectId: "reservation-canape",
-  storageBucket: "reservation-canape.firebasestorage.app",
-  messagingSenderId: "627109249531",
-  appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
-  measurementId: "G-MD8Q5TNHVC"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -85,7 +74,7 @@ const analytics = getAnalytics(app);
 
         // Charger les réservations depuis Firebase
         function chargerReservations() {
-            firebase.database().ref('reservations').on('value', (snapshot) => {
+            db.ref('reservations').on('value', (snapshot) => {
                 const reservations = snapshot.val();
                 if (reservations) {
                     Object.keys(reservations).forEach(id => {
@@ -101,7 +90,7 @@ const analytics = getAnalytics(app);
 
         // Ajouter une réservation dans Firebase
         function reserverPlace(id, nom) {
-            firebase.database().ref('reservations/' + id).set(nom)
+            db.ref('reservations/' + id).set(nom)
                 .then(() => {
                     alert(`Place ${id} réservée avec succès pour ${nom} !`);
                 })
