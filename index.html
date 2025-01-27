@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation de Canapé</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .canape {
+            position: relative;
+            display: inline-block;
+        }
+        .place {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: green;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .place.reservee {
+            background-color: red;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Réservation de place sur le canapé</h1>
+    <p>Clique sur une place disponible pour réserver !</p>
+    <div class="canape">
+        <img src="canape.jpg" alt="Canapé" style="width: 500px;">
+        <!-- Les cercles des places seront ajoutés ici -->
+    </div>
+    <script>
+        const places = [
+            { id: 1, top: 160, left: 120 },
+            { id: 2, top: 150, left: 180 },
+            { id: 3, top: 130, left: 240 },
+            { id: 4, top: 140, left: 340 },
+            { id: 5, top: 170, left: 395 },
+        ];
+
+        const canape = document.querySelector('.canape');
+
+        places.forEach(place => {
+            const div = document.createElement('div');
+            div.className = 'place';
+            div.style.top = place.top + 'px';
+            div.style.left = place.left + 'px';
+            div.textContent = place.id;
+            div.dataset.id = place.id;
+            canape.appendChild(div);
+
+            div.addEventListener('click', () => {
+                if (div.classList.contains('reservee')) {
+                    alert("Cette place est déjà réservée !");
+                } else {
+                    const nom = prompt("Entrez votre prénom pour réserver :");
+                    if (nom) {
+                        div.classList.add('reservee');
+                        div.textContent = nom;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
