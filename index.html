@@ -47,22 +47,22 @@
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
     </div>
     <script>
-         // Configuration Firebase
-         const firebaseConfig = {
-            apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
-            authDomain: "reservation-canape.firebaseapp.com",
-            databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
-            projectId: "reservation-canape",
-            storageBucket: "reservation-canape.firebasestorage.app",
-            messagingSenderId: "627109249531",
-            appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
-            measurementId: "G-MD8Q5TNHVC"
+        // Configuration Firebase
+        const firebaseConfig = {
+         apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
+         authDomain: "reservation-canape.firebaseapp.com",
+         databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
+         projectId: "reservation-canape",
+         storageBucket: "reservation-canape.firebasestorage.app",
+         messagingSenderId: "627109249531",
+         appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
         };
 
         // Initialisation Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Positions des places
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
@@ -73,10 +73,12 @@
 
         const canape = document.querySelector('.canape');
 
-        // Fonction pour charger les réservations depuis Firebase
+        // Charger les réservations depuis Firebase
         function chargerReservations() {
+            console.log("Chargement des réservations...");
             db.ref('reservations').on('value', (snapshot) => {
                 const reservations = snapshot.val();
+                console.log("Réservations actuelles :", reservations);
                 places.forEach(place => {
                     const div = document.querySelector(`[data-id="${place.id}"]`);
                     if (!div) return;
@@ -92,11 +94,11 @@
             });
         }
 
-        // Fonction pour réserver une place et l'enregistrer dans Firebase
+        // Ajouter une réservation dans Firebase
         function reserverPlace(id, nom) {
             db.ref('reservations/' + id).set(nom)
                 .then(() => {
-                    alert(`Place ${id} réservée avec succès pour ${nom} !`);
+                    console.log(`Place ${id} réservée avec succès pour ${nom}`);
                 })
                 .catch((error) => {
                     console.error("Erreur lors de la réservation :", error);
@@ -130,6 +132,5 @@
         // Charger les réservations au démarrage
         chargerReservations();
     </script>
-       
 </body>
 </html>
