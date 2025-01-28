@@ -7,7 +7,7 @@
     <script type="module">
         // Importation des modules Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
         // Configuration Firebase
         const firebaseConfig = {
@@ -51,6 +51,14 @@
                     if (reservations && reservations[place.id]) {
                         div.classList.add('reservee');
                         div.textContent = reservations[place.id];
+
+                        // Ajout du bouton "Annuler" pour les places réservées
+                        div.addEventListener('click', () => {
+                            const confirmation = confirm(`Voulez-vous annuler la réservation de ${reservations[place.id]} ?`);
+                            if (confirmation) {
+                                annulerReservation(place.id);
+                            }
+                        });
                     } else {
                         div.classList.remove('reservee');
                         div.textContent = place.id;
@@ -64,6 +72,13 @@
             set(ref(db, 'reservations/' + id), nom)
                 .then(() => console.log(`✅ Place ${id} réservée pour ${nom}`))
                 .catch((error) => console.error("❌ Erreur lors de la réservation :", error));
+        }
+
+        // Annuler une réservation dans Firebase
+        function annulerReservation(id) {
+            remove(ref(db, 'reservations/' + id))
+                .then(() => console.log(`🗑️ Place ${id} annulée`))
+                .catch((error) => console.error("❌ Erreur lors de l'annulation :", error));
         }
 
         // Générer les cercles pour chaque place
@@ -120,7 +135,7 @@
         }
         .place.reservee {
             background-color: red;
-            cursor: not-allowed;
+            cursor: pointer;
         }
         .place:hover {
             transform: scale(1.1);
@@ -129,7 +144,7 @@
 </head>
 <body>
     <h1>Réservation de place sur le canapé</h1>
-    <p>Clique sur une place disponible pour réserver !</p>
+    <p>Clique sur une place disponible pour réserver ou sur une place rouge pour annuler !</p>
     <div class="canape">
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
     </div>
