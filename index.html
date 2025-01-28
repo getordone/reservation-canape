@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation de Canapé</title>
-    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x/firebase-database.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,21 +45,10 @@
         <img src="canape.jpg" alt="Canapé" style="width: 500px;">
     </div>
     <script>
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
-            authDomain: "reservation-canape.firebaseapp.com",
-            databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
-            projectId: "reservation-canape",
-            storageBucket: "reservation-canape.appspot.com",
-            messagingSenderId: "627109249531",
-            appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
-            measurementId: "G-MD8Q5TNHVC"
-        };
+        // URL du fichier JSON hébergé sur GitHub
+        const apiURL = "https://raw.githubusercontent.com/ton-utilisateur/ton-repo/main/reservations.json";
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
+        // Positions des places
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
@@ -72,56 +59,46 @@
 
         const canape = document.querySelector('.canape');
 
-        // Charger les réservations depuis Firebase
-        function chargerReservations() {
-            db.ref('reservations').on('value', (snapshot) => {
-                const reservations = snapshot.val();
-                if (reservations) {
-                    Object.keys(reservations).forEach(id => {
-                        const place = document.querySelector(`[data-id="${id}"]`);
-                        if (place) {
-                            place.classList.add('reservee');
-                            place.textContent = reservations[id];
+        // Charger les réservations depuis le fichier JSON
+        async function chargerReservations() {
+            try {
+                const response = await fetch(apiURL);
+                const reservations = await response.json();
+
+                places.forEach(place => {
+                    const div = document.createElement('div');
+                    div.className = 'place';
+                    div.style.top = place.top + 'px';
+                    div.style.left = place.left + 'px';
+                    div.textContent = place.id;
+                    div.dataset.id = place.id;
+
+                    // Marquer comme réservée si la place l'est
+                    if (reservations[place.id]) {
+                        div.classList.add('reservee');
+                        div.textContent = reservations[place.id];
+                    }
+
+                    // Gestion du clic pour réserver
+                    div.addEventListener('click', () => {
+                        if (div.classList.contains('reservee')) {
+                            alert("Cette place est déjà réservée !");
+                        } else {
+                            const nom = prompt("Entrez votre prénom pour réserver :");
+                            if (nom) {
+                                div.classList.add('reservee');
+                                div.textContent = nom;
+                                alert(`Place ${place.id} réservée pour ${nom} !`);
+                            }
                         }
                     });
-                }
-            });
-        }
 
-        // Ajouter une réservation dans Firebase
-        function reserverPlace(id, nom) {
-            db.ref('reservations/' + id).set(nom)
-                .then(() => {
-                    alert(`Place ${id} réservée avec succès pour ${nom} !`);
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la réservation :", error);
+                    canape.appendChild(div);
                 });
+            } catch (error) {
+                console.error("Erreur lors du chargement des réservations :", error);
+            }
         }
-
-        // Générer les places sur le canapé
-        places.forEach(place => {
-            const div = document.createElement('div');
-            div.className = 'place';
-            div.style.top = place.top + 'px';
-            div.style.left = place.left + 'px';
-            div.textContent = place.id;
-            div.dataset.id = place.id;
-            canape.appendChild(div);
-
-            div.addEventListener('click', () => {
-                if (div.classList.contains('reservee')) {
-                    alert("Cette place est déjà réservée !");
-                } else {
-                    const nom = prompt("Entrez votre prénom pour réserver :");
-                    if (nom) {
-                        div.classList.add('reservee');
-                        div.textContent = nom;
-                        reserverPlace(place.id, nom);
-                    }
-                }
-            });
-        });
 
         // Charger les réservations au démarrage
         chargerReservations();
