@@ -6,20 +6,20 @@
     <title>Réservation de Canapé</title>
     <script type="module">
         // Importation des modules Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.x/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
-        // Configuration Firebase (remplace avec tes propres informations)
+        // Configuration Firebase
         const firebaseConfig = {
-    apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
-    authDomain: "reservation-canape.firebaseapp.com",
-    databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
-    projectId: "reservation-canape",
-    storageBucket: "reservation-canape.firebasestorage.app",
-    messagingSenderId: "627109249531",
-    appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
-    measurementId: "G-MD8Q5TNHVC"
-  };
+            apiKey: "AIzaSyAYRsHxILNTvKFTjsUFkZrMeuEXzXbctAA",
+            authDomain: "reservation-canape.firebaseapp.com",
+            databaseURL: "https://reservation-canape-default-rtdb.firebaseio.com",
+            projectId: "reservation-canape",
+            storageBucket: "reservation-canape.appspot.com",
+            messagingSenderId: "627109249531",
+            appId: "1:627109249531:web:7788708082dbfda9bb8b5e",
+            measurementId: "G-MD8Q5TNHVC"
+        };
 
         // Initialisation Firebase
         const app = initializeApp(firebaseConfig);
