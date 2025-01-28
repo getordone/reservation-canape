@@ -25,23 +25,25 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Positions des places
+        console.log("✅ Firebase chargé et base de données initialisée");
+
+        // Liste des places avec leurs positions sur l'image
         const places = [
             { id: 1, top: 160, left: 120 },
             { id: 2, top: 150, left: 180 },
             { id: 3, top: 130, left: 240 },
             { id: 4, top: 140, left: 340 },
-            { id: 5, top: 170, left: 395 },
+            { id: 5, top: 170, left: 395 }
         ];
 
         const canape = document.querySelector('.canape');
 
         // Charger les réservations depuis Firebase
         function chargerReservations() {
-            console.log("Chargement des réservations...");
+            console.log("⏳ Chargement des réservations...");
             onValue(ref(db, 'reservations'), (snapshot) => {
                 const reservations = snapshot.val();
-                console.log("Réservations actuelles :", reservations);
+                console.log("📌 Réservations actuelles :", reservations);
                 places.forEach(place => {
                     const div = document.querySelector(`[data-id="${place.id}"]`);
                     if (!div) return;
@@ -60,8 +62,8 @@
         // Ajouter une réservation dans Firebase
         function reserverPlace(id, nom) {
             set(ref(db, 'reservations/' + id), nom)
-                .then(() => console.log(`Place ${id} réservée pour ${nom}`))
-                .catch((error) => console.error("Erreur lors de la réservation :", error));
+                .then(() => console.log(`✅ Place ${id} réservée pour ${nom}`))
+                .catch((error) => console.error("❌ Erreur lors de la réservation :", error));
         }
 
         // Générer les cercles pour chaque place
@@ -76,7 +78,7 @@
 
             div.addEventListener('click', () => {
                 if (div.classList.contains('reservee')) {
-                    alert("Cette place est déjà réservée !");
+                    alert("❌ Cette place est déjà réservée !");
                 } else {
                     const nom = prompt("Entrez votre prénom pour réserver :");
                     if (nom) {
